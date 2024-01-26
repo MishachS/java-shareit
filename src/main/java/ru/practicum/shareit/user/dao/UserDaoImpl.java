@@ -14,7 +14,6 @@ public class UserDaoImpl implements UserDao {
     private int nextId = 1;
     HashMap<Integer, User> userStorage = new HashMap<>();
 
-
     @Override
     public User addUser(User user) {
         checkUserEmail(user);
