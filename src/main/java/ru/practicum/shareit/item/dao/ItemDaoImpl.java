@@ -47,10 +47,10 @@ public class ItemDaoImpl implements ItemDao {
     }
 
     @Override
-    public List<Item> getAllItemsForUser(int ownerId){
+    public List<Item> getAllItemsForUser(int ownerId) {
         List<Item> list = new ArrayList<>();
-        for(Item item : itemStorage.values()) {
-            if(item.getOwner() == ownerId) {
+        for (Item item : itemStorage.values()) {
+            if (item.getOwner() == ownerId) {
                 list.add(item);
             }
         }
@@ -60,8 +60,8 @@ public class ItemDaoImpl implements ItemDao {
     @Override
     public List<Item> searchItemByText(String text) {
         List<Item> list = new ArrayList<>();
-        for(Item item : itemStorage.values()) {
-            if(containsText(item, text) && item.getAvailable()) {
+        for (Item item : itemStorage.values()) {
+            if (containsText(item, text) && item.getAvailable()) {
                 list.add(item);
             }
         }
@@ -74,7 +74,7 @@ public class ItemDaoImpl implements ItemDao {
     }
 
     private void checkItemIdInStorage(int id) {
-        if(!itemStorage.containsKey(id)) {
+        if (!itemStorage.containsKey(id)) {
             throw new NotFoundException("Вещи по вашему id = " + id + " не найдена!");
         }
     }

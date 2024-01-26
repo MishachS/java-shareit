@@ -53,8 +53,8 @@ public class UserDaoImpl implements UserDao {
     }
 
     private void checkUserEmail(User user) {
-        for(User userInStorage : userStorage.values()) {
-            if(userInStorage.getEmail().equals(user.getEmail())) {
+        for (User userInStorage : userStorage.values()) {
+            if (userInStorage.getEmail().equals(user.getEmail())) {
                 throw new EmailException("Пользователь с таким email уже есть!");
             }
         }
@@ -62,7 +62,7 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public void checkUserIdInStorage(int id) {
-        if(!userStorage.containsKey(id)) {
+        if (!userStorage.containsKey(id)) {
             throw new NotFoundException("Пользователь с таким id = " + id + " не найден");
         }
     }
