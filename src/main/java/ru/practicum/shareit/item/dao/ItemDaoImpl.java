@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 
 @Component
-public class ItemDaoImpl implements ItemDao{
+public class ItemDaoImpl implements ItemDao {
     private int nextId = 1;
     public HashMap<Integer, Item> itemStorage = new HashMap<>();
 
