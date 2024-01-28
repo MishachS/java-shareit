@@ -75,7 +75,7 @@ public class ItemDaoImpl implements ItemDao {
 
     private void checkItemIdInStorage(int id) {
         if (!itemStorage.containsKey(id)) {
-            throw new NotFoundException("Вещи по вашему id = " + id + " не найдена!");
+            throw new NotFoundException("Вещь по вашему id = " + id + " не найдена!");
         }
     }
 }
