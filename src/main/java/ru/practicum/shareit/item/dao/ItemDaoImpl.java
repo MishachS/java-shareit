@@ -2,8 +2,8 @@ package ru.practicum.shareit.item.dao;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
+import ru.practicum.shareit.exception.AccessDeniedException;
 import ru.practicum.shareit.exception.NotFoundException;
-import ru.practicum.shareit.exception.OwnerException;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.CommentRepository;
@@ -33,7 +33,7 @@ public class ItemDaoImpl implements ItemDao {
         Item originalItem = itemRepository.findById(itemId)
                 .orElseThrow(() -> new NotFoundException("Вещь по вашему id = " + itemId + " не найдена!"));
         if (originalItem.getOwner().getId() != item.getOwner().getId()) {
-            throw new OwnerException("У вас нет прав для редактирования чужого объявления!");
+            throw new AccessDeniedException("У вас нет прав для редактирования чужого объявления!");
         }
         Optional.ofNullable(item.getName()).ifPresent(originalItem::setName);
         Optional.ofNullable(item.getDescription()).ifPresent(originalItem::setDescription);
@@ -41,8 +41,8 @@ public class ItemDaoImpl implements ItemDao {
         return itemRepository.save(originalItem);
     }
 
-    @Override
     @Transactional
+    @Override
     public Item getItemById(int id) {
         return itemRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Вещь по вашему id = " + id + " не найдена!"));

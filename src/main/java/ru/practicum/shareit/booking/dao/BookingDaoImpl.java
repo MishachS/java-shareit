@@ -6,10 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.Status;
 import ru.practicum.shareit.booking.repository.BookingRepository;
-import ru.practicum.shareit.exception.BadRequestException;
-import ru.practicum.shareit.exception.NotFoundException;
-import ru.practicum.shareit.exception.OwnerException;
-import ru.practicum.shareit.exception.UnknownStateException;
+import ru.practicum.shareit.exception.*;
 import ru.practicum.shareit.user.model.User;
 
 import java.time.LocalDateTime;
@@ -43,11 +40,11 @@ public class BookingDaoImpl implements BookingDao {
     }
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public Booking getInfoBooking(int id, int userId) {
         Booking booking = getBookingById(id);
         if (userId != booking.getBooker().getId() && userId != booking.getItem().getOwner().getId()) {
-            throw new OwnerException("Нет доступа для просмотра чужого запроса!");
+            throw new AccessDeniedException("Нет доступа для просмотра чужого запроса!");
         }
         return booking;
     }

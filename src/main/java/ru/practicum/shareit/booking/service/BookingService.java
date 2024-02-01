@@ -9,6 +9,7 @@ import ru.practicum.shareit.booking.dto.BookingDtoInput;
 import ru.practicum.shareit.booking.mapper.BookingMapper;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.Status;
+import ru.practicum.shareit.exception.AccessDeniedException;
 import ru.practicum.shareit.exception.BadRequestException;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.item.dao.ItemDao;
@@ -32,7 +33,7 @@ public class BookingService {
         if (!item.getAvailable()) {
             throw new BadRequestException("Предмет не доступен для аренды!");
         } else if (item.getOwner().getId() == userId) {
-            throw new NotFoundException("Вы не можете брать в аренду свои вещи!");
+            throw new AccessDeniedException("Вы не можете брать в аренду свои вещи!");
         }
         User user = userDao.getUserById(userId);
         Booking booking = BookingMapper.fromInputBookingDtoToBooking(bookingDtoInput, item, user);

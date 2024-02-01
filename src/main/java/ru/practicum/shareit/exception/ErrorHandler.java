@@ -25,6 +25,13 @@ public class ErrorHandler {
     }
 
     @ExceptionHandler
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse handlerAccessException(final AccessDeniedException e) {
+        log.info("Ошибка доступа: {}", e.getMessage());
+        return new ErrorResponse("NOT FOUND", e.getMessage());
+    }
+
+    @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResponse handlerRuntimeException(final RuntimeException e) {
         log.info("Ошибка сервера: {}", e.getMessage());
