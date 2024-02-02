@@ -14,6 +14,4 @@ public interface UserDao {
     List<User> getAllUsers();
 
     void deleteUser(int id);
-
-    void checkUserIdInStorage(int id);
 }
