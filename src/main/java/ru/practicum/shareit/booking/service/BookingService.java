@@ -3,8 +3,8 @@ package ru.practicum.shareit.booking.service;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.shareit.booking.dao.BookingDao;
 import ru.practicum.shareit.booking.dto.BookingDto;
+import ru.practicum.shareit.booking.dao.BookingDao;
 import ru.practicum.shareit.booking.dto.BookingDtoInput;
 import ru.practicum.shareit.booking.mapper.BookingMapper;
 import ru.practicum.shareit.booking.model.Booking;
@@ -57,17 +57,23 @@ public class BookingService {
         return BookingMapper.toBookingDto(bookingDao.getInfoBooking(bookingId, userId));
     }
 
-    public List<BookingDto> getAllBookingOneUser(int userId, String state) {
+    public List<BookingDto> getAllBookingOneUser(int userId, String state, int from, int size) {
         User user = userDao.getUserById(userId);
-        return bookingDao.getAllBookingOneUser(user, state)
+        if (from < 0) {
+            throw new BadRequestException("Индекс первого элемента не может быть отрицательным");
+        }
+        return bookingDao.getAllBookingOneUser(user, state, from, size)
                 .stream()
                 .map(BookingMapper::toBookingDto)
                 .collect(Collectors.toList());
     }
 
-    public List<BookingDto> getAllBookingOneOwner(int userId, String state) {
+    public List<BookingDto> getAllBookingOneOwner(int userId, String state, int from, int size) {
         User user = userDao.getUserById(userId);
-        return bookingDao.getAllBookingOneOwner(user, state)
+        if (from < 0) {
+            throw new BadRequestException("Индекс первого элемента не может быть отрицательным");
+        }
+        return bookingDao.getAllBookingOneOwner(user, state, from, size)
                 .stream()
                 .map(BookingMapper::toBookingDto)
                 .collect(Collectors.toList());

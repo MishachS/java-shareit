@@ -46,10 +46,10 @@ public class BookingMapper {
     public static BookingDtoInput toInputBookingDto(Booking booking) {
         BookingDtoInput bookingDto = new BookingDtoInput();
         bookingDto.setId(booking.getId());
-        bookingDto.setStart(booking.getStart());
-        bookingDto.setEnd(booking.getEnd());
         bookingDto.setBookerId(booking.getBooker().getId());
         bookingDto.setItemId(booking.getItem().getId());
+        bookingDto.setStart(booking.getStart());
+        bookingDto.setEnd(booking.getEnd());
         return bookingDto;
     }
 }

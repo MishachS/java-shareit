@@ -13,9 +13,9 @@ public interface BookingDao {
 
     Booking getInfoBooking(int id, int userId);
 
-    List<Booking> getAllBookingOneUser(User user, String state);
+    List<Booking> getAllBookingOneUser(User user, String state, int from, int size);
 
-    List<Booking> getAllBookingOneOwner(User user, String state);
+    List<Booking> getAllBookingOneOwner(User user, String state, int from, int size);
 
     Booking getBookingById(Integer id);
 
