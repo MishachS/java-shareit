@@ -144,6 +144,14 @@
 					<version>0.8.8</version>
 					<configuration>
 						<output>file</output>
+						<excludes>
+							<exclude> **/*AccessDeniedException.class</exclude>
+							<exclude> **/*BadRequestException.class</exclude>
+							<exclude> **/*NotFoundException.class</exclude>
+							<exclude> **/*UnknownStateException.class</exclude>
+							<exclude> **/*ErrorHandler.class</exclude>
+							<exclude> **/*ErrorResponse.class</exclude>
+						</excludes>
 					</configuration>
 					<executions>
 						<execution>
