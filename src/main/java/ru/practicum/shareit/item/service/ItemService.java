@@ -12,6 +12,7 @@ import ru.practicum.shareit.booking.mapper.BookingMapper;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.Status;
 import ru.practicum.shareit.booking.repository.BookingRepository;
+import ru.practicum.shareit.exception.AccessDeniedException;
 import ru.practicum.shareit.item.dao.ItemDao;
 import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
@@ -53,6 +54,9 @@ public class ItemService {
 
     @Transactional
     public ItemDto updateItems(int itemId, ItemDto itemDto, int ownerId) {
+        if (itemDao.getItemById(itemId).getOwner().getId() != ownerId) {
+            throw new AccessDeniedException("Вы не можете обновить чужую вещь!");
+        }
         Item item = ItemMapper.toItem(itemDto, userDao.getUserById(ownerId));
         if (itemDto.getRequestId() != null) {
             item.setRequest(requestDao.getRequestById(itemDto.getRequestId()));
