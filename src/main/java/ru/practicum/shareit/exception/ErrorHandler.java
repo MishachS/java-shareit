@@ -17,12 +17,6 @@ public class ErrorHandler {
         return new ErrorResponse("NOT FOUND", e.getMessage());
     }
 
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse handlerOwnerException(final OwnerException e) {
-        log.info("Ошибка валидации: {}", e.getMessage());
-        return new ErrorResponse("NOT FOUND", e.getMessage());
-    }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)

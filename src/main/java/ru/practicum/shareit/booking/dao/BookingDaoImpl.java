@@ -1,18 +1,24 @@
 package ru.practicum.shareit.booking.dao;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.Status;
 import ru.practicum.shareit.booking.repository.BookingRepository;
-import ru.practicum.shareit.exception.*;
+import ru.practicum.shareit.exception.AccessDeniedException;
+import ru.practicum.shareit.exception.BadRequestException;
+import ru.practicum.shareit.exception.NotFoundException;
+import ru.practicum.shareit.exception.UnknownStateException;
 import ru.practicum.shareit.user.model.User;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 @Component
@@ -51,70 +57,76 @@ public class BookingDaoImpl implements BookingDao {
 
     @Transactional(readOnly = true)
     @Override
-    public List<Booking> getAllBookingOneUser(User user, String state) {
-        List<Booking> bookingList = new ArrayList<>();
+    public List<Booking> getAllBookingOneUser(User user, String state, int from, int size) {
+        Page<Booking> bookingList;
+        Pageable page = PageRequest.of(from / size, size);
         switch (state) {
             case "ALL":
-                bookingList.addAll(bookingRepository.findAllByBookerOrderByStartDesc(user));
+                bookingList = bookingRepository.findAllByBookerOrderByStartDesc(user, page);
                 break;
             case "CURRENT":
-                bookingList.addAll(bookingRepository.findAllByBookerAndStartBeforeAndEndAfterOrderByStartDesc(
-                        user, LocalDateTime.now(), LocalDateTime.now()));
+                bookingList = bookingRepository.findAllByBookerAndStartBeforeAndEndAfterOrderByStartDesc(
+                        user, LocalDateTime.now(), LocalDateTime.now(), page);
                 break;
             case "PAST":
-                bookingList.addAll(bookingRepository.findAllByBookerAndEndBeforeOrderByStartDesc(
-                        user, LocalDateTime.now()));
+                bookingList = bookingRepository.findAllByBookerAndEndBeforeOrderByStartDesc(
+                        user, LocalDateTime.now(), page);
                 break;
             case "FUTURE":
-                bookingList.addAll(bookingRepository.findAllByBookerAndStartAfterOrderByStartDesc(
-                        user, LocalDateTime.now()));
+                bookingList = bookingRepository.findAllByBookerAndStartAfterOrderByStartDesc(
+                        user, LocalDateTime.now(), page);
                 break;
             case "WAITING":
-                bookingList.addAll(bookingRepository.findAllByBookerAndStatusEqualsOrderByStartDesc(
-                        user, Status.WAITING));
+                bookingList = bookingRepository.findAllByBookerAndStatusEqualsOrderByStartDesc(
+                        user, Status.WAITING, page);
                 break;
             case "REJECTED":
-                bookingList.addAll(bookingRepository.findAllByBookerAndStatusEqualsOrderByStartDesc(
-                        user, Status.REJECTED));
+                bookingList = bookingRepository.findAllByBookerAndStatusEqualsOrderByStartDesc(
+                        user, Status.REJECTED, page);
                 break;
             default:
-                throw new UnknownStateException("Unknown state: " + Status.UNSUPPORTED_STATUS);
+                throw new UnknownStateException("Unknown state:" + Status.UNSUPPORTED_STATUS);
         }
-        return bookingList;
+        return bookingList
+                .stream()
+                .collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
     @Override
-    public List<Booking> getAllBookingOneOwner(User user, String status) {
-        List<Booking> bookingList = new ArrayList<>();
-        switch (status) {
+    public List<Booking> getAllBookingOneOwner(User user, String state, int from, int size) {
+        Page<Booking> bookingList;
+        Pageable page = PageRequest.of(from / size, size);
+        switch (state) {
             case "ALL":
-                bookingList.addAll(bookingRepository.findAllByItemOwnerOrderByStartDesc(user));
+                bookingList = bookingRepository.findAllByItemOwnerOrderByStartDesc(user, page);
                 break;
             case "CURRENT":
-                bookingList.addAll(bookingRepository.findAllByItemOwnerAndStartBeforeAndEndAfterOrderByStartDesc(
-                        user, LocalDateTime.now(), LocalDateTime.now()));
+                bookingList = bookingRepository.findAllByItemOwnerAndStartBeforeAndEndAfterOrderByStartDesc(
+                        user, LocalDateTime.now(), LocalDateTime.now(), page);
                 break;
             case "PAST":
-                bookingList.addAll(bookingRepository.findAllByItemOwnerAndEndBeforeOrderByStartDesc(
-                        user, LocalDateTime.now()));
+                bookingList = bookingRepository.findAllByItemOwnerAndEndBeforeOrderByStartDesc(
+                        user, LocalDateTime.now(), page);
                 break;
             case "FUTURE":
-                bookingList.addAll(bookingRepository.findAllByItemOwnerAndStartAfterOrderByStartDesc(
-                        user, LocalDateTime.now()));
+                bookingList = bookingRepository.findAllByItemOwnerAndStartAfterOrderByStartDesc(
+                        user, LocalDateTime.now(), page);
                 break;
             case "WAITING":
-                bookingList.addAll(bookingRepository.findAllByItemOwnerAndStatusEqualsOrderByStartDesc(
-                        user, Status.WAITING));
+                bookingList = bookingRepository.findAllByItemOwnerAndStatusEqualsOrderByStartDesc(
+                        user, Status.WAITING, page);
                 break;
             case "REJECTED":
-                bookingList.addAll(bookingRepository.findAllByItemOwnerAndStatusEqualsOrderByStartDesc(
-                        user, Status.REJECTED));
+                bookingList = bookingRepository.findAllByItemOwnerAndStatusEqualsOrderByStartDesc(
+                        user, Status.REJECTED, page);
                 break;
             default:
-                throw new UnknownStateException("Unknown state: " + Status.UNSUPPORTED_STATUS);
+                throw new UnknownStateException("Unknown state:" + Status.UNSUPPORTED_STATUS);
         }
-        return bookingList;
+        return bookingList
+                .stream()
+                .collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
@@ -123,7 +135,6 @@ public class BookingDaoImpl implements BookingDao {
         return bookingRepository.findById(id).orElseThrow(() -> new NotFoundException("Запроса с id = " + id + " нет!"));
     }
 
-    @Transactional(readOnly = true)
     @Override
     public Optional<Booking> getLast(int id) {
         return bookingRepository.findFirstByItemIdAndStatusAndStartBeforeOrderByStartDesc(
@@ -140,7 +151,7 @@ public class BookingDaoImpl implements BookingDao {
     @Transactional(readOnly = true)
     @Override
     public void checkUserBooking(Integer userId, Integer itemId) {
-        if (!bookingRepository.existsByBookerIdAndItemIdAndEndIsBefore(userId, itemId, LocalDateTime.now())) {
+        if (!bookingRepository.existsByBookerIdAndItemIdAndStartIsBefore(userId, itemId, LocalDateTime.now())) {
             throw new BadRequestException("У вас нет доступа чтобы оставить комментарий для вещи, которой вы не пользовались!");
         }
     }

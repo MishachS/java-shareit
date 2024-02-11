@@ -1,7 +1,6 @@
-package ru.practicum.shareit.item.model;
+package ru.practicum.shareit.request.model;
 
 import lombok.Data;
-import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.user.model.User;
 
 import javax.persistence.CascadeType;
@@ -13,25 +12,26 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import java.time.LocalDateTime;
 
-@Data
+
 @Entity
-@Table(name = "items")
-public class Item {
+@Data
+@Table(name = "requests")
+public class ItemRequest {
+
     @Id
-    @Column(name = "item_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
-    @Column(length = 200, nullable = false)
-    private String name;
+    @Column(name = "request_id")
+    public int id;
+
     @Column(length = 1000, nullable = false)
     private String description;
-    @Column
-    private Boolean available;
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "owner_id", nullable = false)
-    private User owner;
-    @ManyToOne
-    @JoinColumn(name = "request_id")
-    private ItemRequest request;
+
+    @Column(nullable = false)
+    public LocalDateTime created;
+
+    @ManyToOne(optional = false, cascade = CascadeType.ALL)
+    @JoinColumn(name = "requester_id")
+    public User requester;
 }

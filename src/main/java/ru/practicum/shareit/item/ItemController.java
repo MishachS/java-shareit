@@ -16,6 +16,8 @@ import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.service.ItemService;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
 @Slf4j
@@ -26,12 +28,12 @@ public class ItemController {
     private ItemService itemService;
 
     @PostMapping
-    public ItemDto addItems(@Valid @RequestBody ItemDto itemDto, @RequestHeader("X-Sharer-User-Id") int ownerId) {
+    public ItemDto addItems(@Valid @RequestBody ItemDto itemDto, @RequestHeader("X-Sharer-User-Id") Integer ownerId) {
         return itemService.addItems(itemDto, ownerId);
     }
 
     @PatchMapping("/{itemId}")
-    public ItemDto updateItems(@PathVariable Integer itemId, @RequestBody ItemDto itemDto, @RequestHeader("X-Sharer-User-Id") int ownerId) {
+    public ItemDto updateItems(@PathVariable Integer itemId, @RequestBody ItemDto itemDto, @RequestHeader("X-Sharer-User-Id") Integer ownerId) {
         return itemService.updateItems(itemId, itemDto, ownerId);
     }
 
@@ -41,13 +43,17 @@ public class ItemController {
     }
 
     @GetMapping
-    public List<ItemDto> getAllItemsOneUser(@RequestHeader("X-Sharer-User-Id") int ownerId) {
-        return itemService.getAllItemsOneUser(ownerId);
+    public List<ItemDto> getAllItemsOneUser(@RequestHeader("X-Sharer-User-Id") int ownerId,
+                                            @PositiveOrZero @RequestParam(defaultValue = "0", required = false) Integer from,
+                                            @Positive @RequestParam(defaultValue = "20", required = false) Integer size) {
+        return itemService.getAllItemsOneUser(ownerId, from, size);
     }
 
     @GetMapping("/search")
-    public List<ItemDto> searchItemByText(@RequestParam String text) {
-        return itemService.searchItemByText(text);
+    public List<ItemDto> searchItemByText(@RequestParam String text,
+                                          @PositiveOrZero @RequestParam(defaultValue = "0", required = false) Integer from,
+                                          @Positive @RequestParam(defaultValue = "20", required = false) Integer size) {
+        return itemService.searchItemByText(text, from, size);
     }
 
     @PostMapping("/{itemId}/comment")

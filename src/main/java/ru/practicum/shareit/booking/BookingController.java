@@ -16,6 +16,7 @@ import ru.practicum.shareit.booking.dto.BookingDtoInput;
 import ru.practicum.shareit.booking.service.BookingService;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Positive;
 import java.util.List;
 
 @Slf4j
@@ -43,14 +44,18 @@ public class BookingController {
 
     @GetMapping
     public List<BookingDto> getAllBookingOneUser(@RequestHeader("X-Sharer-User-Id") Integer userId,
-                                                 @RequestParam(defaultValue = "ALL") String state) {
-        return bookingService.getAllBookingOneUser(userId, state);
+                                                 @RequestParam(defaultValue = "ALL") String state,
+                                                 @RequestParam(defaultValue = "0", required = false) Integer from,
+                                                 @Positive @RequestParam(defaultValue = "20", required = false) Integer size) {
+        return bookingService.getAllBookingOneUser(userId, state, from, size);
     }
 
     @GetMapping("/owner")
     public List<BookingDto> getAllBookingOneOwner(@RequestHeader("X-Sharer-User-Id") Integer userId,
-                                                  @RequestParam(defaultValue = "ALL") String state) {
-        return bookingService.getAllBookingOneOwner(userId, state);
+                                                  @RequestParam(defaultValue = "ALL") String state,
+                                                  @RequestParam(defaultValue = "0", required = false) Integer from,
+                                                  @Positive @RequestParam(defaultValue = "20", required = false) Integer size) {
+        return bookingService.getAllBookingOneOwner(userId, state, from, size);
 
     }
 }

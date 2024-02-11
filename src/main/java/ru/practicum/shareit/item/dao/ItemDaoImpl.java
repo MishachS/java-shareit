@@ -1,6 +1,9 @@
 package ru.practicum.shareit.item.dao;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import ru.practicum.shareit.exception.AccessDeniedException;
 import ru.practicum.shareit.exception.NotFoundException;
@@ -12,11 +15,12 @@ import ru.practicum.shareit.item.repository.ItemRepository;
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Component
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class ItemDaoImpl implements ItemDao {
     private final ItemRepository itemRepository;
     private final CommentRepository commentRepository;
@@ -32,7 +36,7 @@ public class ItemDaoImpl implements ItemDao {
     public Item updateItem(int itemId, Item item) {
         Item originalItem = itemRepository.findById(itemId)
                 .orElseThrow(() -> new NotFoundException("Вещь по вашему id = " + itemId + " не найдена!"));
-        if (originalItem.getOwner().getId() != item.getOwner().getId()) {
+        if (!Objects.equals(originalItem.getOwner().getId(), item.getOwner().getId())) {
             throw new AccessDeniedException("У вас нет прав для редактирования чужого объявления!");
         }
         Optional.ofNullable(item.getName()).ifPresent(originalItem::setName);
@@ -50,17 +54,8 @@ public class ItemDaoImpl implements ItemDao {
 
     @Override
     @Transactional
-    public List<Item> getAllItemsForUser(int ownerId) {
-        return itemRepository.findAll()
-                .stream()
-                .filter(item -> item.getOwner().getId() == ownerId)
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    @Transactional
-    public List<Item> searchItemByText(String text) {
-        return itemRepository.findAll()
+    public List<Item> searchItemByText(String text, int from, int size) {
+        return itemRepository.findAll(PageRequest.of(from, size))
                 .stream()
                 .filter(Item::getAvailable)
                 .filter(item -> containsText(item, text))
@@ -78,6 +73,21 @@ public class ItemDaoImpl implements ItemDao {
     @Transactional
     public List<Comment> getAllCommentOneItem(int id) {
         return commentRepository.findByItemId(id);
+    }
+
+    @Override
+    public List<Item> getAllItemsByOneRequest(int requestId) {
+        return itemRepository.findAllByRequestId(requestId);
+    }
+
+    @Override
+    public Page<Item> findAllByOwnerId(Integer ownerId, Pageable pageable) {
+        return itemRepository.findAllByOwnerId(ownerId, pageable);
+    }
+
+    @Override
+    public List<Item> findAllByRequestIdIn(List<Integer> requestIds) {
+        return itemRepository.findAllByRequestIdIn(requestIds);
     }
 
     private boolean containsText(Item item, String text) {
