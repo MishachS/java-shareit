@@ -23,18 +23,21 @@ public class ItemController {
 
     @PostMapping // addItems Добавление новой вещи
     public ResponseEntity<Object> addItems(@Valid @RequestBody ItemDto itemDto, @RequestHeader("X-Sharer-User-Id") Integer ownerId) {
+        log.info("Метод addItems . userId " + ownerId);
         return itemClient.addItem(itemDto, ownerId);
     }
 
     @PatchMapping("/{itemId}")
     public ResponseEntity<Object> updateItems(@PathVariable Integer itemId, @RequestBody ItemDto itemDto,
                                               @RequestHeader("X-Sharer-User-Id") Integer ownerId) {
+        log.info("Метод updateItems . userId " + ownerId + " itemId " + itemId);
         return itemClient.updateItem(itemId, itemDto, ownerId);
     }
 
 
     @GetMapping("/{itemId}")
     public ResponseEntity<Object> getItemsById(@PathVariable Integer itemId, @RequestHeader("X-Sharer-User-Id") Integer ownerId) {
+        log.info("Метод getItemsById . userId " + ownerId + " itemId " + itemId);
         return itemClient.getItemById(itemId, ownerId);
     }
 
@@ -42,6 +45,7 @@ public class ItemController {
     public ResponseEntity<Object> getAllItemsOneUser(@RequestHeader("X-Sharer-User-Id") Integer ownerId,
                                                      @PositiveOrZero @RequestParam(defaultValue = "0", required = false) Integer from,
                                                      @Positive @RequestParam(defaultValue = "20", required = false) Integer size) {
+        log.info("Метод getAllItemsOneUser . userId " + ownerId);
         return itemClient.getAllItemsOneUserOrderByIdAsc(ownerId, from, size);
     }
 
@@ -49,12 +53,14 @@ public class ItemController {
     public ResponseEntity<Object> searchItemByText(@RequestParam String text,
                                                    @PositiveOrZero @RequestParam(defaultValue = "0", required = false) Integer from,
                                                    @Positive @RequestParam(defaultValue = "20", required = false) Integer size) {
+        log.info("Метод searchItemByText");
         return itemClient.searchItemByText(text, from, size);
     }
 
     @PostMapping("/{itemId}/comment")
     public ResponseEntity<Object> addComment(@PathVariable Integer itemId, @RequestHeader("X-Sharer-User-Id") Integer userId,
                                              @Valid @RequestBody CommentDto commentDto) {
+        log.info("Метод addComment . userId " + userId + " itemId " + itemId);
         return itemClient.addComment(itemId, userId, commentDto);
     }
 }

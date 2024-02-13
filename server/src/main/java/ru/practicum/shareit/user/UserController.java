@@ -25,26 +25,31 @@ public class UserController {
 
     @PostMapping
     public UserDto addUser(@Valid @RequestBody UserDto userDto) {
+        log.info("Метод addUser");
         return userService.addUser(userDto);
     }
 
     @PatchMapping("/{userId}")
     public UserDto updateUser(@RequestBody UserDto userDto, @PathVariable Integer userId) {
+        log.info("Метод updateUser userId " + userId);
         return userService.updateUser(userDto, userId);
     }
 
     @GetMapping("/{userId}")
     public UserDto getUserById(@PathVariable Integer userId) {
+        log.info("Метод getUserById userId " + userId);
         return userService.getUserById(userId);
     }
 
     @GetMapping
     public List<UserDto> getAllUser() {
+        log.info("Метод getAllUser");
         return userService.getAllUser();
     }
 
     @DeleteMapping("/{userId}")
     public void deleteUser(@PathVariable Integer userId) {
+        log.info("Метод deleteUser userId " + userId);
         userService.deleteUser(userId);
     }
 }

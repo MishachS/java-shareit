@@ -23,6 +23,7 @@ public class BookingController {
 
 	@PostMapping
 	public ResponseEntity<Object> addBooking(@Valid @RequestBody BookingClientDto bookingClientDto, @RequestHeader("X-Sharer-User-Id") Integer userId) {
+		log.info("Метод addBooking userId " + userId);
 		if (bookingClientDto.getStart().isAfter(bookingClientDto.getEnd()) ||
 				bookingClientDto.getStart().equals(bookingClientDto.getEnd())) {
 			throw new BadRequestException("Ошибка в дате аренды!");
@@ -33,11 +34,13 @@ public class BookingController {
 	@PatchMapping("/{bookingId}")
 	public ResponseEntity<Object> responseToRequest(@PathVariable Integer bookingId, @RequestHeader("X-Sharer-User-Id") Integer userId,
 													@RequestParam Boolean approved) {
+		log.info("Метод responseToRequest userId " + userId + "bookingId" + bookingId);
 		return bookingClient.responseToRequest(bookingId, userId, approved);
 	}
 
 	@GetMapping("{bookingId}")
 	public ResponseEntity<Object> getInfoBooking(@PathVariable Integer bookingId, @RequestHeader("X-Sharer-User-Id") Integer userId) {
+		log.info("Метод getInfoBooking userId " + userId + "bookingId" + bookingId);
 		return bookingClient.getInfoBooking(bookingId, userId);
 	}
 
@@ -46,8 +49,10 @@ public class BookingController {
 													   @RequestParam(defaultValue = "ALL") String state,
 													   @RequestParam(defaultValue = "0", required = false) Integer from,
 													   @RequestParam(defaultValue = "20", required = false) Integer size) {
+
 		BookingState states = BookingState.from(state)
 				.orElseThrow(() -> new UnknownStateException("Неизвестный параметр " + state));
+		log.info("Метод getAllBookingOneUser userId " + userId);
 		return bookingClient.getAllBookingOneUser(userId, states, from, size);
 	}
 
@@ -58,6 +63,7 @@ public class BookingController {
 														@RequestParam(defaultValue = "20", required = false) Integer size) {
 		BookingState states = BookingState.from(state)
 				.orElseThrow(() -> new UnknownStateException("Неизвестный параметр " + state));
+		log.info("Метод getAllBookingOneOwner userId " + userId);
 		return bookingClient.getAllBookingOneOwner(userId, states, from, size);
 
 	}

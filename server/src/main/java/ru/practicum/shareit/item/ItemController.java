@@ -29,16 +29,19 @@ public class ItemController {
 
     @PostMapping
     public ItemDto addItems(@Valid @RequestBody ItemDto itemDto, @RequestHeader("X-Sharer-User-Id") Integer ownerId) {
+        log.info("Метод addItems . userId " + ownerId);
         return itemService.addItems(itemDto, ownerId);
     }
 
     @PatchMapping("/{itemId}")
     public ItemDto updateItems(@PathVariable Integer itemId, @RequestBody ItemDto itemDto, @RequestHeader("X-Sharer-User-Id") Integer ownerId) {
+        log.info("Метод updateItems . userId " + ownerId + " itemId " + itemId);
         return itemService.updateItems(itemId, itemDto, ownerId);
     }
 
     @GetMapping("/{itemId}")
     public ItemDto getItemsById(@PathVariable Integer itemId, @RequestHeader("X-Sharer-User-Id") Integer ownerId) {
+        log.info("Метод getItemsById . userId " + ownerId + " itemId " + itemId);
         return itemService.getItemsById(itemId, ownerId);
     }
 
@@ -46,6 +49,7 @@ public class ItemController {
     public List<ItemDto> getAllItemsOneUser(@RequestHeader("X-Sharer-User-Id") int ownerId,
                                             @PositiveOrZero @RequestParam(defaultValue = "0", required = false) Integer from,
                                             @Positive @RequestParam(defaultValue = "20", required = false) Integer size) {
+        log.info("Метод getAllItemsOneUser . userId " + ownerId);
         return itemService.getAllItemsOneUser(ownerId, from, size);
     }
 
@@ -53,12 +57,14 @@ public class ItemController {
     public List<ItemDto> searchItemByText(@RequestParam String text,
                                           @PositiveOrZero @RequestParam(defaultValue = "0", required = false) Integer from,
                                           @Positive @RequestParam(defaultValue = "20", required = false) Integer size) {
+        log.info("Метод searchItemByText");
         return itemService.searchItemByText(text, from, size);
     }
 
     @PostMapping("/{itemId}/comment")
     public CommentDto addComment(@PathVariable Integer itemId, @RequestHeader("X-Sharer-User-Id") Integer userId,
                                  @Valid @RequestBody CommentDto commentDto) {
+        log.info("Метод addComment . userId " + userId + " itemId " + itemId);
         return itemService.addComment(itemId, userId, commentDto);
     }
 }

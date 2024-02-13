@@ -20,26 +20,31 @@ public class UserController {
 
     @PostMapping
     public ResponseEntity<Object> addUser(@Valid @RequestBody UserDto userDto) {
+        log.info("Метод addUser");
         return userClient.addUser(userDto);
     }
 
     @PatchMapping("/{userId}")
     public ResponseEntity<Object> updateUser(@RequestBody UserDto userDto, @PathVariable Integer userId) {
+        log.info("Метод updateUser userId " + userId);
         return userClient.updateUser(userDto, userId);
     }
 
     @GetMapping("/{userId}")
     public ResponseEntity<Object> getUserById(@PathVariable Integer userId) {
+        log.info("Метод getUserById userId " + userId);
         return userClient.getUserById(userId);
     }
 
     @GetMapping
     public ResponseEntity<Object> getAllUser() {
+        log.info("Метод getAllUser");
         return userClient.getAllUser();
     }
 
     @DeleteMapping("/{userId}")
     public ResponseEntity<Object> deleteUser(@PathVariable Integer userId) {
+        log.info("Метод deleteUser userId " + userId);
         return userClient.deleteUser(userId);
     }
 }
